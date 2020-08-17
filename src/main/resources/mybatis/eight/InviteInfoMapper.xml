@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bootdo.eight.dao.InviteInfoDao">
+
+	<select id="get" resultType="com.bootdo.eight.domain.InviteInfoDO">
+		select `code`,`valid` from invite_info where code = #{value}
+	</select>
+
+	<select id="list" resultType="com.bootdo.eight.domain.InviteInfoDO">
+		select `code`,`valid` from invite_info
+        <where>  
+		  		  <if test="code != null and code != ''"> and code = #{code} </if>
+		  		  <if test="valid != null and valid != ''"> and valid = #{valid} </if>
+		  		</where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+			<otherwise>
+                order by code desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="count" resultType="int">
+		select count(*) from invite_info
+		 <where>  
+		  		  <if test="code != null and code != ''"> and code = #{code} </if>
+		  		  <if test="valid != null and valid != ''"> and valid = #{valid} </if>
+		  		</where>
+	</select>
+	 
+	<insert id="save" parameterType="com.bootdo.eight.domain.InviteInfoDO">
+		insert into invite_info
+		(
+			`code`, 
+			`valid`
+		)
+		values
+		(
+			#{code}, 
+			#{valid}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.bootdo.eight.domain.InviteInfoDO">
+		update invite_info 
+		<set>
+			<if test="valid != null">`valid` = #{valid}</if>
+		</set>
+		where code = #{code}
+	</update>
+	
+	<delete id="remove">
+		delete from invite_info where code = #{value}
+	</delete>
+	
+	<delete id="batchRemove">
+		delete from invite_info where code in 
+		<foreach item="code" collection="array" open="(" separator="," close=")">
+			#{code}
+		</foreach>
+	</delete>
+
+</mapper>

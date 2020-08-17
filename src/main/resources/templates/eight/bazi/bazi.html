@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<link href="/css/layui.css" rel="stylesheet">
+<body class="gray-bg">
+	<div class="wrapper wrapper-content ">
+		<div class="col-sm-12">
+			<div class="ibox">
+				<div class="ibox-body">
+					<div class="fixed-table-toolbar">
+						<div class="columns pull-left">
+							<button shiro:hasPermission="eight:bazi:add" type="button" class="btn  btn-primary" onclick="add()">
+								<i class="fa fa-plus" aria-hidden="true"></i>添加
+							</button>
+							<button shiro:hasPermission="eight:bazi:batchRemove" type="button" class="btn  btn-danger"
+								onclick="batchRemove()">
+								<i class="fa fa-trash" aria-hidden="true"></i>删除
+							</button>
+						</div>
+						<div class="columns pull-right">
+							<button class="btn btn-success" onclick="reLoad()">查询</button>
+							<button class="btn btn-success" onclick="downLoad()" >下载该用户数据</button>
+							<button type="button" class="layui-btn" id="upload">
+								<i class="fa fa-cloud"></i>上传文件
+							</button>
+						</div>
+						<div class="columns pull-right col-md-2 nopadding">
+							<input id="searchName" type="text" class="form-control"
+								placeholder="">
+							<input id="userid" type="text" style="display: none" th:value = "${userid}">
+
+						</div>
+					</div>
+					<table id="exampleTable" data-mobile-responsive="true">
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--shiro控制bootstraptable行内按钮看见性 来自bootdo的创新方案 -->
+		<div>
+			<script type="text/javascript">
+				var s_edit_h = 'hidden';
+				var s_remove_h = 'hidden';
+				var s_resetPwd_h = 'hidden';
+			</script>
+		</div>
+		<div shiro:hasPermission="eight:bazi:edit">
+			<script type="text/javascript">
+				s_edit_h = '';
+			</script>
+		</div>
+		<div shiro:hasPermission="eight:bazi:remove">
+			<script type="text/javascript">
+				var s_remove_h = '';
+			</script>
+		</div>
+		<div shiro:hasPermission="eight:bazi:resetPwd">
+			<script type="text/javascript">
+				var s_resetPwd_h = '';
+			</script>
+		</div>
+	</div>
+	<div th:include="include :: footer"></div>
+	<script src="/js/layui.js"></script>
+	<script src="/js/plugins/layer/layer.min.js"></script>
+	<script type="text/javascript" src="/js/appjs/eight/bazi/bazi.js"></script>
+<script  type="text/javascript">
+	function downLoad() {
+		if(userid == ''){
+			alert("请先搜索用户id后在下载数据")
+		}else {
+			window.location = '/eight/bazi/downloadConfigFilter?userId=' + userid;
+		}
+	}
+	layui.use('upload', function () {
+		var upload = layui.upload;
+		//执行实例
+		var uploadInst = upload.render({
+			elem: '#upload', //绑定元素
+			url: '/eight/bazi/uploadExcel', //上传接口
+			size: 1000,
+			accept: 'file',
+			done: function (r) {
+				console.log(r);
+				reLoad();
+			},
+			error: function (r) {
+				layer.msg(r.msg);
+			}
+		});
+	});
+</script>
+</body>
+</html>
